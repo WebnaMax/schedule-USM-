@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Расписание I2602 (ru)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F4EE;
+    --paper-line:#DFDACB;
+    --ink:#1D2233;
+    --ink-soft:#666C82;
+    --ink-faint:#9096A8;
+    --par-accent:#2E6F52;
+    --par-bg:#E3EEE7;
+    --impar-accent:#8C3B4A;
+    --impar-bg:#F2E4E6;
+    --now-bg:#FFF3D6;
+    --now-border:#D9A441;
+    --card:#FFFFFF;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--paper-line) 1px, transparent 1px);
+    background-size: 100% 42px;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:28px 16px 60px;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  header{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:20px;
+    padding-bottom:22px;
+    margin-bottom:26px;
+    border-bottom:2px solid var(--ink);
+  }
+
+  .title-block h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(34px,5vw,54px);
+    line-height:1;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .title-block p{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:15px;
+  }
+
+  .status{
+    text-align:right;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:8px;
+  }
+  .today-line{
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  .parity-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 16px;
+    border-radius:999px;
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:18px;
+    border:1.5px solid currentColor;
+  }
+  .parity-pill.par{ color:var(--par-accent); background:var(--par-bg); }
+  .parity-pill.impar{ color:var(--impar-accent); background:var(--impar-bg); }
+  .parity-pill .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:currentColor;
+  }
+
+  .now-card{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    background:var(--card);
+    border:1.5px solid var(--ink);
+    border-radius:14px;
+    padding:18px 22px;
+    margin-bottom:22px;
+    box-shadow: 4px 4px 0 var(--now-border);
+  }
+  .now-card.state-break{ box-shadow: 4px 4px 0 #8A7CC2; }
+  .now-card.state-done{ box-shadow: 4px 4px 0 var(--ink-faint); opacity:.85; }
+
+  .now-card-tag{
+    flex:0 0 auto;
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--now-border);
+    padding:6px 10px;
+    border-radius:8px;
+    writing-mode:horizontal-tb;
+  }
+  .now-card.state-break .now-card-tag{ background:#8A7CC2; }
+  .now-card.state-done .now-card-tag{ background:var(--ink-faint); }
+
+  .now-card-main{ flex:1 1 auto; min-width:0; }
+  .now-card-subj{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:20px;
+    line-height:1.25;
+    margin-bottom:4px;
+  }
+  .now-card-meta{
+    font-size:13.5px;
+    color:var(--ink-soft);
+  }
+
+  .now-card-timer{
+    flex:0 0 auto;
+    text-align:right;
+  }
+  .now-card-timer-label{
+    display:block;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:2px;
+  }
+  .now-card-timer-clock{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:26px;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:0.02em;
+  }
+
+  @media (max-width:560px){
+    .now-card{ flex-wrap:wrap; }
+    .now-card-timer{ text-align:left; flex-basis:100%; }
+  }
+
+  .now-card-next{
+    margin:-14px 0 22px;
+    padding:8px 22px 8px 26px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .now-card-next strong{ color:var(--ink); font-weight:600; }
+
+  .toggle{
+    display:flex;
+    gap:6px;
+    margin:0 0 22px;
+  }
+  .toggle button{
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:9px 18px;
+    border-radius:8px;
+    border:1.5px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .toggle button.active.par{ background:var(--par-accent); border-color:var(--par-accent); color:#fff; }
+  .toggle button.active.impar{ background:var(--impar-accent); border-color:var(--impar-accent); color:#fff; }
+  .toggle .hint{
+    align-self:center;
+    margin-left:8px;
+    font-size:13px;
+    color:var(--ink-faint);
+  }
+
+  .day-tabs{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:22px;
+  }
+  .day-tabs button{
+    position:relative;
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    padding:11px 20px;
+    border-radius:10px;
+    border:1.5px solid var(--paper-line);
+    background:var(--card);
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .day-tabs button:hover{ border-color:var(--ink-faint); color:var(--ink); }
+  .day-tabs button.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--paper);
+  }
+  .day-tabs button.today::after{
+    content:'';
+    position:absolute;
+    top:6px; right:7px;
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--now-border);
+  }
+  .day-tabs button.today.active::after{ background:#FFD98A; }
+
+  .pairs-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .pair-card{
+    display:flex;
+    gap:18px;
+    background:var(--card);
+    border:1.5px solid var(--paper-line);
+    border-radius:14px;
+    padding:16px 20px;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .pair-card.is-empty{ opacity:.5; }
+  .pair-card.is-now{
+    border-color:var(--now-border);
+    background:var(--now-bg);
+    box-shadow:4px 4px 0 var(--now-border);
+  }
+  .pair-card.is-next{
+    border-color:#8A7CC2;
+    background:#F4F2FA;
+  }
+
+  .pair-num-block{
+    flex:0 0 76px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding-right:16px;
+    border-right:1.5px solid var(--paper-line);
+  }
+  .pair-num-block .num{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:26px;
+    line-height:1;
+    color:var(--ink);
+  }
+  .pair-num-block .time{
+    margin-top:6px;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+
+  .pair-body{
+    flex:1 1 auto;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:8px;
+  }
+  .pair-empty-label{
+    font-size:13.5px;
+    color:var(--ink-faint);
+  }
+  .pair-entry .subj{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:16.5px;
+    line-height:1.3;
+  }
+  .pair-entry .meta{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .pair-entry + .pair-entry{
+    margin-top:8px;
+    padding-top:8px;
+    border-top:1px dashed var(--paper-line);
+  }
+
+  .pair-tag{
+    flex:0 0 auto;
+    align-self:center;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--now-border);
+    padding:5px 10px;
+    border-radius:7px;
+  }
+  .pair-card.is-next .pair-tag{ background:#8A7CC2; }
+
+  @media (max-width:560px){
+    .pair-card{ gap:12px; padding:14px; }
+    .pair-num-block{ flex-basis:56px; padding-right:10px; }
+    .pair-num-block .num{ font-size:21px; }
+  }
+
+  footer{
+    margin-top:28px;
+    font-size:12.5px;
+    color:var(--ink-faint);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  @media (max-width:640px){
+    header{flex-direction:column; align-items:flex-start;}
+    .status{align-items:flex-start; text-align:left;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="title-block">
+      <h1>I2602 (ru)</h1>
+      <p>Расписание занятий · Семестр I, 2026–2027</p>
+    </div>
+    <div class="status">
+      <div class="today-line" id="todayLine">—</div>
+      <div class="parity-pill" id="parityPill"><span class="dot"></span><span id="parityText">—</span></div>
+    </div>
+  </header>
+
+  <div class="now-card" id="nowCard" style="display:none;">
+    <div class="now-card-tag" id="nowCardTag"></div>
+    <div class="now-card-main">
+      <div class="now-card-subj" id="nowCardSubj">—</div>
+      <div class="now-card-meta" id="nowCardMeta"></div>
+    </div>
+    <div class="now-card-timer">
+      <span class="now-card-timer-label" id="nowCardTimerLabel"></span>
+      <span class="now-card-timer-clock" id="nowCardTimerClock"></span>
+    </div>
+  </div>
+  <div class="now-card-next" id="nowCardNext" style="display:none;"></div>
+
+  <div class="toggle" id="toggle">
+    <button data-p="par">Чётная (PAR)</button>
+    <button data-p="impar">Нечётная (IMP)</button>
+    <span class="hint" id="toggleHint"></span>
+  </div>
+
+  <div class="day-tabs" id="dayTabs">
+    <button data-day="1">Пн</button>
+    <button data-day="2">Вт</button>
+    <button data-day="3">Ср</button>
+    <button data-day="4">Чт</button>
+    <button data-day="5">Пт</button>
+    <button data-day="6">Сб</button>
+  </div>
+
+  <div class="pairs-list" id="pairsList"></div>
+
+  <footer>
+    <span>Группа I2602(ru) · FMI USM</span>
+    <span id="rangeLine"></span>
+  </footer>
+
+</div>
+
+<script>
+// ---------- Данные расписания ----------
+const PERIODS = [
+  { n: 'I',   time: '08:00–09:30' },
+  { n: 'II',  time: '09:45–11:15' },
+  { n: 'III', time: '11:30–13:00' },
+  { n: 'IV',  time: '13:15–14:45' },
+  { n: 'V',   time: '15:00–16:30' },
+];
+
+// days: 1=Пн ... 6=Сб
+function e(subj, teacher, room){ return { subj, teacher, room }; }
+
+const SCHEDULE = {
+  par: {
+    1: [ [e('Иностранный язык (начинающие)','G. Ciudin','222/4')], [], [e('Математика (семинар)','L. Solovei','113/4')], [], [e('Иностранный язык','O. Bașirov','419/4')] ],
+    2: [ [e('Операционные системы (курс)','E. Seiciuc','213a/4')], [e('Основы программирования (семинар)','V. Grigorcea','214/4')], [e('Основы программирования (курс)','Gh. Latul','213a/4')], [e('Иностранный язык','O. Bașirov','401/4')], [] ],
+    3: [ [], [e('Кибербезопасность (курс)','L. Novac','213a/4')], [e('HTML (лабораторная)','G. Marin','326/4')], [], [e('Иностранный язык (начинающие)','G. Ciudin','222/4'), e('Иностранный язык','O. Bașirov','214/4')] ],
+    4: [ [], [e('Основы программирования (лабораторная)','C. Crudu','251/4')], [e('Операционные системы (лабораторная)','G. Marin','326/4')], [e('Кибербезопасность (лабораторная)','N. Lupu','145a/4')], [e('Румынский язык (par)','A. Boicenco','401/4')] ],
+    5: [ [], [e('Математика (лекция)','L. Solovei','213a/4')], [e('HTML и CSS (лекция)','T. Pașa','213a/4')], [e('Румынский язык','A. Boicenco','401/4')], [] ],
+    6: [ [], [], [], [], [] ],
+  },
+  impar: {
+    1: [ [e('Иностранный язык (начинающие)','G. Ciudin','222/4')], [], [e('Математика (семинар)','L. Solovei','113/4')], [], [e('Иностранный язык','O. Bașirov','419/4')] ],
+    2: [ [e('Операционные системы (курс)','E. Seiciuc','213a/4')], [e('Основы программирования (семинар)','V. Grigorcea','214/4')], [e('Основы программирования (лекция)','Gh. Latul','213a/4')], [e('Операционные системы (лабораторная)','G. Marin','326/4')], [] ],
+    3: [ [], [e('Кибербезопасность (курс)','L. Novac','213a/4')], [e('HTML (лабораторная)','G. Marin','326/4')], [], [e('Иностранный язык (начинающие)','G. Ciudin','222/4'), e('Иностранный язык','O. Bașirov','214/4')] ],
+    4: [ [e('Физкультура','—','imp')], [e('Основы программирования (лабораторная)','C. Crudu','251/4')], [e('Операционные системы (лабораторная)','G. Marin','326/4')], [e('Кибербезопасность (лабораторная)','N. Lupu','145a/4')], [] ],
+    5: [ [e('Математика (семинар)','L. Solovei','214/4')], [e('Математика (лекция)','L. Solovei','213a/4')], [e('HTML и CSS (лекция)','T. Pașa','213a/4')], [e('Румынский язык','A. Boicenco','401/4')], [e('Иностранный язык (начинающие)','G. Ciudin','222/4')] ],
+    6: [ [], [], [], [], [] ],
+  }
+};
+
+// ---------- Расчёт чётности недели ----------
+// Опорная дата: 1 сентября 2026 (Вт) начинает "чётную" (par) неделю
+const REF_START = new Date(2026, 8, 1); // месяцы с 0
+
+function dateOnly(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+
+function computeParity(date){
+  const d0 = dateOnly(date);
+  const diffDays = Math.floor((d0 - REF_START) / 86400000);
+  const weekIndex = Math.floor(diffDays / 7);
+  const mod = ((weekIndex % 2) + 2) % 2;
+  return mod === 0 ? 'par' : 'impar';
+}
+
+function weekRangeLabel(date){
+  const d0 = dateOnly(date);
+  const diffDays = Math.floor((d0 - REF_START) / 86400000);
+  const weekIndex = Math.floor(diffDays / 7);
+  const start = new Date(REF_START.getTime() + weekIndex * 7 * 86400000);
+  const end = new Date(start.getTime() + 6 * 86400000);
+  const fmt = (d) => d.toLocaleDateString('ru-RU', { day:'numeric', month:'long' });
+  return `${fmt(start)} – ${fmt(end)}`;
+}
+
+const PERIOD_RANGES = [[480,570],[585,675],[690,780],[795,885],[900,990]]; // минуты от полуночи
+
+// ---------- Отладка: подмена текущего времени для теста ----------
+// Оставить null для реального времени. Для теста задать конкретную дату:
+// const DEBUG_FORCE_NOW = new Date(2026, 8, 3, 9, 37, 0);
+const DEBUG_FORCE_NOW = null;
+function currentDate(){ return DEBUG_FORCE_NOW ? new Date(DEBUG_FORCE_NOW.getTime()) : new Date(); }
+
+const initNow = currentDate();
+const todayParity = computeParity(initNow);
+const jsDay = initNow.getDay(); // 0=Вс,1=Пн...6=Сб
+const todayCol = (jsDay === 0) ? null : jsDay; // воскресенье вне сетки
+
+function nowMinutesExact(d){ return d.getHours()*60 + d.getMinutes() + d.getSeconds()/60; }
+
+// текущая пара по времени (индекс) либо -1
+function currentPeriodIndex(mins){
+  if (todayCol === null || todayCol === 6) return -1;
+  for (let i=0;i<PERIOD_RANGES.length;i++){
+    if (mins >= PERIOD_RANGES[i][0] && mins < PERIOD_RANGES[i][1]) return i;
+  }
+  return -1;
+}
+
+let curPeriod = -1; // уточняется функцией tick() при загрузке
+
+// ---------- Рендер ----------
+const dayNames = { 1:'понедельник',2:'вторник',3:'среда',4:'четверг',5:'пятница',6:'суббота' };
+document.getElementById('todayLine').textContent =
+  'Сегодня: ' + initNow.toLocaleDateString('ru-RU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+document.getElementById('rangeLine').textContent = 'Текущая неделя: ' + weekRangeLabel(initNow);
+
+const pill = document.getElementById('parityPill');
+const pillText = document.getElementById('parityText');
+
+function setParityPill(p){
+  pill.classList.remove('par','impar');
+  pill.classList.add(p);
+  pillText.textContent = p === 'par' ? 'Чётная неделя (PAR)' : 'Нечётная неделя (IMP)';
+}
+setParityPill(todayParity);
+
+document.querySelectorAll('.day-tabs button').forEach(btn=>{
+  if (parseInt(btn.dataset.day) === todayCol) btn.classList.add('today');
+});
+
+let activeParity = todayParity;
+let activeDay = (todayCol !== null) ? todayCol : 1;
+
+const dayFullNames = { 1:'Понедельник',2:'Вторник',3:'Среда',4:'Четверг',5:'Пятница',6:'Суббота' };
+
+function renderPairs(parity, day){
+  const list = document.getElementById('pairsList');
+  list.innerHTML = '';
+
+  const slots = SCHEDULE[parity][day] || [];
+  const isRealToday = (parity === todayParity && day === todayCol);
+
+  PERIODS.forEach((period, idx) => {
+    const items = slots[idx] || [];
+    const card = document.createElement('div');
+    card.className = 'pair-card';
+
+    const isNow = isRealToday && idx === curPeriod;
+    if (items.length === 0){
+      card.classList.add('is-empty');
+    }
+    if (isNow){
+      card.classList.add('is-now');
+    }
+
+    const numBlock = document.createElement('div');
+    numBlock.className = 'pair-num-block';
+    numBlock.innerHTML = `<span class="num">${period.n}</span><span class="time">${period.time}</span>`;
+    card.appendChild(numBlock);
+
+    const body = document.createElement('div');
+    body.className = 'pair-body';
+    if (items.length === 0){
+      body.innerHTML = '<span class="pair-empty-label">Нет пары</span>';
+    } else {
+      body.innerHTML = items.map(it => `
+        <div class="pair-entry">
+          <div class="subj">${it.subj}</div>
+          <div class="meta">${it.teacher} · ${it.room}</div>
+        </div>
+      `).join('');
+    }
+    card.appendChild(body);
+
+    if (isNow){
+      const tag = document.createElement('div');
+      tag.className = 'pair-tag';
+      tag.textContent = 'Идёт';
+      card.appendChild(tag);
+    }
+
+    list.appendChild(card);
+  });
+}
+
+function setDay(day){
+  activeDay = day;
+  document.querySelectorAll('.day-tabs button').forEach(btn=>{
+    btn.classList.toggle('active', parseInt(btn.dataset.day) === day);
+  });
+  renderPairs(activeParity, activeDay);
+}
+
+document.querySelectorAll('.day-tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=> setDay(parseInt(btn.dataset.day)));
+});
+
+function setToggle(parity){
+  activeParity = parity;
+  document.querySelectorAll('.toggle button').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.p === parity);
+    btn.classList.toggle(btn.dataset.p, btn.dataset.p === parity);
+  });
+  const hint = document.getElementById('toggleHint');
+  hint.textContent = (parity === todayParity) ? '(текущая неделя)' : '';
+  renderPairs(activeParity, activeDay);
+}
+
+document.querySelectorAll('.toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=> setToggle(btn.dataset.p));
+});
+
+setToggle(todayParity);
+setDay(activeDay);
+
+// ---------- Карточка "сейчас/следующая пара" ----------
+const nowCard = document.getElementById('nowCard');
+const nowCardTag = document.getElementById('nowCardTag');
+const nowCardSubj = document.getElementById('nowCardSubj');
+const nowCardMeta = document.getElementById('nowCardMeta');
+const nowCardTimerLabel = document.getElementById('nowCardTimerLabel');
+const nowCardTimerClock = document.getElementById('nowCardTimerClock');
+
+function fmtClock(totalSeconds){
+  totalSeconds = Math.max(0, Math.round(totalSeconds));
+  const h = Math.floor(totalSeconds/3600);
+  const m = Math.floor((totalSeconds%3600)/60);
+  const s = totalSeconds%60;
+  const mm = String(m).padStart(2,'0');
+  const ss = String(s).padStart(2,'0');
+  return h>0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
+function getTodaysSlots(){
+  if (todayCol === null) return null; // воскресенье
+  return SCHEDULE[todayParity][todayCol];
+}
+
+const ALMOST_OVER_SECONDS = 600; // 10 минут до конца пары — начинаем показывать подсказку о следующей
+const nowCardNext = document.getElementById('nowCardNext');
+
+function findNextNonEmpty(slots, fromIdx){
+  for (let i = fromIdx; i < PERIOD_RANGES.length; i++){
+    if (slots[i] && slots[i].length > 0) return i;
+  }
+  return -1;
+}
+
+function tick(){
+  const d = currentDate();
+  const mins = nowMinutesExact(d);
+  const slots = getTodaysSlots();
+
+  if (!slots){
+    nowCard.style.display = 'none';
+    if (curPeriod !== -1){ curPeriod = -1; renderPairs(activeParity, activeDay); }
+    return;
+  }
+
+  const idxAtTime = currentPeriodIndex(mins);
+
+  // подсветка карточки всегда следует реальной текущей паре (todayParity/todayCol)
+  const highlightIdx = (idxAtTime !== -1 && slots[idxAtTime].length > 0) ? idxAtTime : -1;
+  if (highlightIdx !== curPeriod){
+    curPeriod = highlightIdx;
+    renderPairs(activeParity, activeDay);
+  }
+
+  nowCard.style.display = 'flex';
+  nowCard.classList.remove('state-current','state-break','state-done');
+
+  let cardIdx = -1;
+  let mode = 'done';
+
+  if (idxAtTime !== -1 && slots[idxAtTime].length > 0){
+    cardIdx = idxAtTime;
+    mode = 'current';
+  } else {
+    const searchFrom = (idxAtTime !== -1) ? idxAtTime + 1 : PERIOD_RANGES.findIndex(r => r[0] > mins);
+    if (searchFrom !== -1){
+      for (let i = searchFrom; i < PERIOD_RANGES.length; i++){
+        if (slots[i] && slots[i].length > 0){ cardIdx = i; mode = 'upcoming'; break; }
+      }
+    }
+  }
+
+  if (mode === 'current'){
+    const entries = slots[cardIdx];
+    const endMin = PERIOD_RANGES[cardIdx][1];
+    const remainSec = (endMin - mins) * 60;
+    nowCard.classList.add('state-current');
+    nowCardTag.textContent = `Идёт · пара ${PERIODS[cardIdx].n}`;
+    nowCardSubj.textContent = entries.map(x => x.subj).join(' + ');
+    nowCardMeta.textContent = entries.map(x => `${x.teacher} · ${x.room}`).join('  /  ') + `  ·  ${PERIODS[cardIdx].time}`;
+    nowCardTimerLabel.textContent = 'До конца пары';
+    nowCardTimerClock.textContent = fmtClock(remainSec);
+
+    if (remainSec <= ALMOST_OVER_SECONDS){
+      const nextIdx = findNextNonEmpty(slots, cardIdx + 1);
+      if (nextIdx !== -1){
+        const nEntries = slots[nextIdx];
+        const untilStartMin = Math.max(0, Math.round(PERIOD_RANGES[nextIdx][0] - mins));
+        nowCardNext.style.display = 'block';
+        nowCardNext.innerHTML = `Скоро конец пары · далее: <strong>${nEntries.map(x => x.subj).join(' + ')}</strong> · пара ${PERIODS[nextIdx].n} · через ${untilStartMin} мин`;
+      } else {
+        nowCardNext.style.display = 'block';
+        nowCardNext.textContent = 'Скоро конец пары · это последняя пара сегодня';
+      }
+    } else {
+      nowCardNext.style.display = 'none';
+    }
+  } else {
+    nowCardNext.style.display = 'none';
+  }
+
+  if (mode === 'upcoming'){
+    const entries = slots[cardIdx];
+    const startMin = PERIOD_RANGES[cardIdx][0];
+    nowCard.classList.add('state-break');
+    nowCardTag.textContent = `Далее · пара ${PERIODS[cardIdx].n}`;
+    nowCardSubj.textContent = entries.map(x => x.subj).join(' + ');
+    nowCardMeta.textContent = entries.map(x => `${x.teacher} · ${x.room}`).join('  /  ') + `  ·  ${PERIODS[cardIdx].time}`;
+    nowCardTimerLabel.textContent = 'До начала';
+    nowCardTimerClock.textContent = fmtClock((startMin - mins) * 60);
+  } else if (mode === 'done'){
+    nowCard.classList.add('state-done');
+    nowCardTag.textContent = 'Сегодня';
+    nowCardSubj.textContent = 'Занятий больше нет';
+    nowCardMeta.textContent = '';
+    nowCardTimerLabel.textContent = '';
+    nowCardTimerClock.textContent = '—';
+  }
+}
+
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
